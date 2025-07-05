@@ -50,10 +50,14 @@ if __name__ == '__main__':
 	freq = torch.arange(200, 3000, 20)  # (t,) 20 Hz - 3000 Hz
 	pitch = freq_to_pitch(freq)  # (t,)
 	roll = pitch_to_roll(pitch, intervals_per_semitone=1, halfwidth=1.)  # (t, f)
+	print(roll.shape)
 	
 	# Visualization
 	fig, axes = plt.subplots(2, 1, sharex=True)
 	axes[0].plot(freq)
 	axes[1].matshow(roll.T, origin='lower', aspect='auto', cmap='jet')
+	axes[0].set_ylabel("Freq (Hz)")
+	axes[1].set_ylabel("Pitch bins")
+	axes[1].set_xlabel("Time (frames)")
 	plt.savefig("out.pdf")
 	print("Write out to out.pdf")

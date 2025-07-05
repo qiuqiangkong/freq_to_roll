@@ -13,4 +13,4 @@ print(roll.shape)
 
 ## Visualization
 
-<img src="https://github.com/user-attachments/files/21072415/out.pdf" width="800">
+<img src="https://github.com/user-attachments/assets/1b1a1836-7119-434b-8a76-bbad0d206bfb" width="800">

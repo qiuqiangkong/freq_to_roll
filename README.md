@@ -26,4 +26,4 @@ python main.py
 
 ## Visualization
 
-<img src="https://github.com/user-attachments/assets/1b1a1836-7119-434b-8a76-bbad0d206bfb" width="800">
+<img src="https://github.com/user-attachments/assets/25d7e22f-4259-41dc-9ea1-f39b69cf58ca" width="800">

@@ -5,30 +5,33 @@ from torch import Tensor
 
 def pitch_to_roll(
     pitch: Tensor, 
-    intervals_per_semitone: int = 1,
-    halfwidth: float = 1.
+    bins_per_semitone: int = 1,
+    smooth_bins: float = 1.
 ) -> Tensor:
     r"""Convert 1D pitch array to 2D roll.
 
     Args:
-        pitch: (t,)
+        pitch: (p.shape, t), e.g., (t,) | (b, t)
         intervals_per_semitone: int
         halfwidth: float
 
     Returns:
-        roll: (t, f)
+        roll: (p.shape, f)
     """
 
-    T = pitch.shape[0]
-    F = 128 * intervals_per_semitone
-    x = torch.arange(F)[None, :].repeat(T, 1)  # (t, f)
+    # Reserve space
+    F = 128 * bins_per_semitone
+    x = torch.zeros(pitch.shape + (F,))  # (p.shape, f)
+    x[..., :] = torch.arange(F)  # (p.shape, f)
 
-    a = 1 / halfwidth  # scalar
-    b = 1 - (pitch * intervals_per_semitone) / halfwidth  # (t,)
-    roll = a * x + b[:, None]  # (t, f)
+    # y = ax + b
+    a = 1 / smooth_bins  # scalar
+    b = 1 - (pitch * bins_per_semitone) / smooth_bins  # (p.shape,)
+    roll = a * x + b[..., None]  # (p.shape, f)
 
+    # Assign values to roll
     indices = torch.nonzero(roll > 1, as_tuple=True)
-    roll[indices[0], indices[1]] = 2 - roll[indices[0], indices[1]]
+    roll[indices] = 2 - roll[indices]
     roll = torch.clamp(roll, 0, 1)
 
     return roll
@@ -47,9 +50,8 @@ def pitch_to_freq(pitch: Tensor) -> Tensor:
 if __name__ == '__main__':
 
     # Example
-    freq = torch.arange(200, 3000, 20)  # (t,) 20 Hz - 3000 Hz
-    pitch = freq_to_pitch(freq)  # (t,)
-    roll = pitch_to_roll(pitch, intervals_per_semitone=1, halfwidth=1.)  # (t, f)
+    freq = torch.Tensor([430 * 2**(i/12.) for i in range(-12, 13)])  # 215 - 860 Hz, (t,)
+    roll = pitch_to_roll(freq_to_pitch(freq))  # (t, f)
     print(roll.shape)
     
     # Visualization

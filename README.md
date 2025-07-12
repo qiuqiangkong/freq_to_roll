@@ -7,11 +7,21 @@ This repo converts frequency/pitch array to a 2D roll.
 ```python
 import torch
 from main import freq_to_pitch, pitch_to_roll
-freq = torch.arange(200, 3000, 20)  # (t,) 20 Hz - 3000 Hz
 
-pitch = freq_to_pitch(freq)  # (t,)
-roll = pitch_to_roll(pitch, intervals_per_semitone=1, halfwidth=1.)  # (t, f)
+# Convert an array
+freq = torch.Tensor([430, 450, 470, 490])  # Hz, (t,)
+roll = pitch_to_roll(freq_to_pitch(freq))  # (t, f)
 print(roll.shape)
+
+# Convert in batch
+freq = torch.Tensor([[430, 450, 470, 490]])  # Hz, (b, t,)
+roll = pitch_to_roll(freq_to_pitch(freq))  # (b, t, f)
+```
+
+Run more examples by:
+
+```python
+python main.py
 ```
 
 ## Visualization
